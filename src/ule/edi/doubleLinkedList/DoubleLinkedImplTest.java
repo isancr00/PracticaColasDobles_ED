@@ -22,8 +22,6 @@ public void antesDe() {
 	listaConElems.insertFirst("A");
 	
 }
-
-
 	
 	@Test
 	public void isEmptyTest() {
@@ -82,7 +80,7 @@ public void antesDe() {
 	
 	@Test
 	public void isSubListTest() throws EmptyCollectionException {
-		 Assert.assertTrue(listaConElems.isSubList(lv));
+			Assert.assertTrue(listaConElems.isSubList(lv));
 	    	Assert.assertTrue(listaConElems.isSubList(new DoubleLinkedListImpl<String>("A", "B", "C")));
 	      	Assert.assertEquals(listaConElems.toString(),"(A B C A B D )");
 	      	Assert.assertEquals(new DoubleLinkedListImpl<String>("A", "C").toString(),"(A C )");   
@@ -90,8 +88,9 @@ public void antesDe() {
 	     	Assert.assertEquals(listaConElems.maxRepeated(),2);
 	     	listaConElems.insertBefore("A", "D");
 	    	Assert.assertEquals(listaConElems.toString(),"(A B C A B A D )");
-	    	Assert.assertTrue(listaConElems.maxRepeated()==3);
-	        	  
+	    	Assert.assertTrue(listaConElems.maxRepeated()==3);	        	  
 	}
+	
+	
 
 }
