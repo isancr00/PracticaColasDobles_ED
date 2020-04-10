@@ -165,9 +165,9 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			node.prev = null;
 			node = node.next;
 		}
-		
+
 		front = last= null;
-		
+
 	}
 
 
@@ -209,10 +209,12 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 
 	@Override
 	public T removeFirst() throws EmptyCollectionException{
-		T elem = front.elem;
+
+		T elem;
 		if(isEmpty()) {
 			throw new EmptyCollectionException("DoubleLinkedList");
 		}else{
+			elem = front.elem;
 			front.elem = null;
 			front = front.next;
 		}
@@ -223,10 +225,11 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 
 	@Override
 	public T removeLast()  throws EmptyCollectionException{
-		T elem = last.elem;
+		T elem;
 		if(isEmpty()) {
 			throw new EmptyCollectionException("DoubleLinkedList");
 		}else{
+			elem = last.elem;
 			last.elem = null;
 			last = last.prev;
 		}
@@ -241,17 +244,22 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			throw new NullPointerException();
 		}else if(position == 0) {
 			throw new IllegalArgumentException();
-		}else {
-			int contador = 1;
+		}else if(position == 1){
+			insertFirst(elem);
+		}else {	
 			DoubleNode<T> node = front;
-			DoubleNode<T> nodeInsertar = new DoubleNode<T> (elem);
+			DoubleNode<T> nodeInsertar = new DoubleNode<T>(elem);
+			int contador = 1;
+			
 			while(node != null) {
 				if(contador == position) {
-					node.prev = nodeInsertar;
+					node.prev.next = nodeInsertar;
 					nodeInsertar.next = node;
+					node.prev = nodeInsertar;
 				}
-				node = node.next;
+				
 				contador++;
+				node = node.next;
 			}
 		}
 
@@ -260,21 +268,29 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 
 	@Override
 	public void insertBefore(T elem, T target) {
-		if(elem == null || target == null) {
+		if(elem == null){
 			throw new NullPointerException();
+		}else if(target == null) {
+			throw new NullPointerException();
+		}else if(!contains(target)){
+			throw new NoSuchElementException();
+		}else if(target.equals(front.elem)){
+			insertFirst(elem);
 		}else {
 			DoubleNode<T> node = front;
 			DoubleNode<T> nodeInsertar = new DoubleNode<T> (elem);
+			
 			while(node != null) {
-				if(node.elem == target) {
+				
+				if(target.equals(node.elem)) {
 					node.prev.next = nodeInsertar;
-					nodeInsertar.prev = node.prev;
+					nodeInsertar.prev = node.prev.next;
 					node.prev = nodeInsertar;
-					nodeInsertar.next = node;
+					nodeInsertar.next = node;					
 				}
+				
 				node = node.next;
 			}
-
 		}
 
 	}
@@ -321,7 +337,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			}
 
 		}
-
+		contador = 0;
 		return contador;
 	}
 
@@ -345,6 +361,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			}
 
 		}
+		contador = 0;
 
 		return contador;
 
