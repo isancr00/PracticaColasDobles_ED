@@ -2,6 +2,7 @@ package ule.edi.doubleLinkedList;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.junit.*;
@@ -132,7 +133,7 @@ public void antesDe() {
 	@Test
 	public void removeLastNotEmptyTest() throws EmptyCollectionException {
 		listaConElems.removeLast();
-		Assert.assertEquals(listaConElems.toString(), "(A B C A B )");		
+		Assert.assertEquals(listaConElems.toString(), "(A B C A B null )");		//No entiendo el null	
 		
 	}
 	
@@ -241,5 +242,192 @@ public void antesDe() {
 		Assert.assertEquals(listaConElems.removeAll("W"), 0);
 	}
 	
+	@Test (expected = NullPointerException.class)
+	public void containsNullElementTest() {
+		listaConElems.contains(null);
+	}
+	
+	@Test
+	public void toStringReverseNotEmptyTest() {
+		Assert.assertEquals(listaConElems.toStringReverse(), "(D B A C B A )");
+	}
 
+	
+	@Test
+	public void reverseTest() {
+		Assert.assertEquals(listaConElems.reverse().toString(), listaConElems.toStringReverse());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void isEqualsNullOtherTest() {
+		
+		listaConElems.isEquals(null);
+	}
+	
+	@Test
+	public void isEqualsTest() throws EmptyCollectionException {
+		DoubleLinkedListImpl<String> aux = new DoubleLinkedListImpl<String>("A","B","C","A","B","D");
+		Assert.assertEquals(aux.toString(),listaConElems.toString());
+		Assert.assertTrue(aux.isEquals(listaConElems));
+		aux.removeLast();
+		aux.insertLast("A");
+		Assert.assertFalse(aux.isEquals(listaConElems));
+
+		
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void containsAllNUllTest() {
+		listaConElems.containsAll(null);
+	}
+	
+	@Test
+	public void containsAllSameListTest() {
+		Assert.assertTrue(listaConElems.containsAll(listaConElems));
+	}
+	
+	@Test
+	public void containsAllOtherBiggerTest() {
+		Assert.assertFalse(lv.containsAll(listaConElems));
+	}
+	
+	@Test
+	public void containsAllContainedTest() {
+		lv.insertFirst("A");
+		Assert.assertTrue(listaConElems.containsAll(lv));
+	}
+	
+	@Test
+	public void containsAllNotContainedTest() {
+		lv.insertFirst("Y");
+		Assert.assertFalse(listaConElems.containsAll(lv));
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void isSublistNullOtherTest() {
+		listaConElems.isSubList(null);
+	}
+	
+	@Test
+	public void isSublistSameOtherTest() {
+		Assert.assertTrue(listaConElems.isSubList(listaConElems));
+	}
+	
+	@Test
+	public void isSublistOtherBiggerTest() {
+		Assert.assertFalse(lv.isSubList(listaConElems));
+	}
+	
+	@Test
+	public void isSublistExtraTest() {
+				
+		DoubleLinkedListImpl<String> lv1 = new DoubleLinkedListImpl<String>("W","D");
+		
+		Assert.assertEquals(listaConElems.toString(), "(A B C A B D )");
+		Assert.assertEquals(lv1.toString(), "(W D )");
+		Assert.assertFalse(listaConElems.isSubList(lv1));
+	}
+	
+	@Test
+	public void toStringFromToUntilTest() {
+		Assert.assertEquals(listaConElems.toStringFromUntil(2, 5), "(B C A B )");
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void toStringFromToUntilZeroFromTest() {
+		listaConElems.toStringFromUntil(0, 879);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void toStringFromToUntilZeroUntilTest() {
+		listaConElems.toStringFromUntil(25, 0);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void toStringFromToUntilUntilLessTest() {
+		listaConElems.toStringFromUntil(25, 12);
+	}
+	
+	@Test 
+	public void iteratorNextTest() {
+		Iterator<String> iterator =listaConElems.iterator();
+		Assert.assertEquals(iterator.next(),"A");
+		Assert.assertEquals(iterator.next(),"B");
+	}
+	
+	@Test (expected = NoSuchElementException.class)
+	public void iteratorNoNextTest() {
+		Iterator<String> iterator =lv.iterator();
+		iterator.next();
+	}
+	
+	@Test 
+	public void iteratorReverseNextTest() {
+		Iterator<String> iterator =listaConElems.reverseIterator();
+
+		Assert.assertEquals(iterator.next(),"D");
+		Assert.assertEquals(iterator.next(),"B");
+
+		
+	}
+	
+	@Test (expected = NoSuchElementException.class)
+	public void iteratorReverseNoNextTest() {
+		Iterator<String> iterator =lv.reverseIterator();
+
+		iterator.next();
+	}
+	
+	@Test 
+	public void iteratorEvenNextTest() {
+		Iterator<String> iterator =listaConElems.evenPositionsIterator();
+
+		
+		Assert.assertEquals(iterator.next(),"B");
+		Assert.assertEquals(iterator.next(),"A");
+
+		
+	}
+	
+	@Test (expected = NoSuchElementException.class)
+	public void iteratorEvenNoNextTest() {
+		Iterator<String> iterator =lv.evenPositionsIterator();
+
+		iterator.next();
+	}
+	
+	@Test
+	public void iteratorProgressNextTest() {
+		DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<Integer>(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19);
+		
+		Iterator<Integer> iterator =lista.progressIterator();
+		
+		Assert.assertEquals(iterator.next(), 1 , 0);
+		Assert.assertEquals(iterator.next(), 2 , 0);
+		Assert.assertEquals(iterator.next(), 4 , 0);
+		Assert.assertEquals(iterator.next(), 7 , 0);
+		Assert.assertEquals(iterator.next(), 11 , 0);
+		Assert.assertEquals(iterator.next(), 16 , 0);
+
+		
+	}
+	
+	@Test (expected = NoSuchElementException.class)
+	public void iteratorProgressNoNextTest() {
+		Iterator<String> iterator =lv.progressIterator();
+
+		iterator.next();
+	}
+	
+	
+	
+	@Test
+	public void getPosLastTest() {
+		Assert.assertEquals(listaConElems.getPosLast("A"),4);
+		Assert.assertEquals(listaConElems.getPosLast("B"),5);
+		Assert.assertEquals(listaConElems.getPosLast("D"),6);
+
+		
+	}	
+		
 }

@@ -75,10 +75,6 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	private class DobleLinkedListIteratorReverse<T> implements Iterator<T> {
 		DoubleNode <T>current;
 
-
-
-
-
 		public DobleLinkedListIteratorReverse(DoubleNode<T> node) {
 			this.current = node;
 
@@ -129,17 +125,65 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 				throw new NoSuchElementException();
 			}
 
-			T result = current.elem;
+			T result;
+
 			if(this.current.prev == null) {
 				this.current = this.current.next;
+				result = current.elem;
 			}else {
 				this.current = this.current.next.next;
+				result = current.elem;
 			}
 			return result;
 		}
 
 
 	}
+
+	private class DobleLinkedListIteratorProgress<T> implements Iterator<T>{
+
+		DoubleNode<T> current;
+		int i = 1;
+
+		public DobleLinkedListIteratorProgress(DoubleNode<T> node) {
+			this.current = node;
+
+		}
+
+
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return(this.current != null);
+		}
+
+		@Override
+		public T next() {
+			// TODO Auto-generated method stub
+
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+
+			T element = current.elem;
+
+
+			for(int index=0;index<i;index++) {
+				if(current.next != null) {
+					current=current.next;
+
+				}
+			}
+
+
+			i++;
+			return element;
+		}
+
+	}
+
+
+
 
 	@SafeVarargs
 	public DoubleLinkedListImpl(T...v ) {
@@ -250,14 +294,14 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			DoubleNode<T> node = front;
 			DoubleNode<T> nodeInsertar = new DoubleNode<T>(elem);
 			int contador = 1;
-			
+
 			while(node != null) {
 				if(contador == position) {
 					node.prev.next = nodeInsertar;
 					nodeInsertar.next = node;
 					node.prev = nodeInsertar;
 				}
-				
+
 				contador++;
 				node = node.next;
 			}
@@ -279,18 +323,19 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		}else {
 			DoubleNode<T> node = front;
 			DoubleNode<T> nodeInsertar = new DoubleNode<T> (elem);
-			
+
 			while(node != null) {
-				
+
 				if(target.equals(node.elem)) {
 					node.prev.next = nodeInsertar;
 					nodeInsertar.prev = node.prev.next;
 					node.prev = nodeInsertar;
 					nodeInsertar.next = node;					
 				}
-				
+
 				node = node.next;
 			}
+			
 		}
 
 	}
@@ -310,6 +355,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 				}
 
 				node = node.next;
+
 				contador++;
 			}
 		}
@@ -325,7 +371,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 
 		if(elem == null) {
 			throw new NullPointerException();
-		}else {
+		}else{
 			DoubleNode<T> node = front;
 			while(node != null) {
 				if(node.elem.equals(elem)) {
@@ -335,17 +381,16 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 				contador++;
 				node = node.next;
 			}
-
 		}
-		contador = 0;
-		return contador;
+		return 0;
 	}
 
 
 	@Override
 	public int getPosLast(T elem) {
 
-		int contador = 1;
+		int contador = 0;
+		int resultado = 0;
 
 		if(elem == null) {
 			throw new NullPointerException();
@@ -353,7 +398,8 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			DoubleNode<T> node = last;
 			while(node != null) {
 				if(node.elem.equals(elem)) {
-					return contador;
+					resultado = size()-contador;
+					return resultado;
 				}
 
 				contador++;
@@ -361,9 +407,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			}
 
 		}
-		contador = 0;
-
-		return contador;
+		return resultado;
 
 	}
 
@@ -479,9 +523,15 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		}else {
 
 			while(node != null) {
-				aux.append(node.elem);
-				aux.append(" ");
-				node = node.prev;
+
+				if(node == null) {
+					aux.append("");
+				}else {
+
+					aux.append(node.elem);
+					aux.append(" ");
+					node = node.prev;
+				}
 			}
 
 		}
@@ -563,6 +613,8 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 
 		if(other == null) {
 			throw new NullPointerException();
+		}else if(other.size()>this.size()) {
+			return false;
 		}else if(this.isEquals(other)) {
 			return true;
 		}else {
@@ -581,7 +633,6 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		return resultado;
 	}
 
-	//Está mal, mirar correo
 	@Override
 	public boolean isSubList(DoubleList<T> other) {
 
@@ -594,21 +645,14 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			return false;
 		}if(other.isEmpty()){
 			return true;
-		}else {	
-			for(int i=this.getPosFirst(other.getElemPos(1)); i<other.size()+1;i++) {
-				if(this.getElemPos(i).equals(other.getElemPos(i))){
+		}else if(!containsAll(other)){
+			return false;			
+		}else {
+			for(int i = 1; i<other.size()+1;i++){
+				resultado = false;				
+				if(other.getElemPos(i).equals(this.getElemPos(i))) {
 					resultado = true;
-				}else {
-					resultado = false;
-					int aux=0;
-					for(int j= this.getPosLast(other.getElemPos(1));j<other.size();j++) {
-						aux++;
-						if(this.getElemPos(j).equals(other.getElemPos(aux))){
-							resultado = true;
-						}else {
-							return false;
-						}
-					}
+
 				}
 			}
 		}
@@ -627,7 +671,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			throw new IllegalArgumentException();
 		}else {
 
-			for(int i=1;i<until+1;i++) {
+			for(int i=from;i<until+1;i++) {
 				aux.append(this.getElemPos(i));
 				aux.append(" ");
 			}
@@ -669,7 +713,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public Iterator<T> reverseIterator() {
 
-		return new DobleLinkedListIteratorReverse<T>(front);
+		return new DobleLinkedListIteratorReverse<T>(last);
 	}
 
 
@@ -683,7 +727,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public Iterator<T> progressIterator() {
 
-		return null;
+		return new DobleLinkedListIteratorProgress<T>(front);
 	}
 
 
